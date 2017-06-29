@@ -1,0 +1,24 @@
+.header {
+	background-color: lavender;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 20px;
+	padding-top: 20px;
+	text-align: center;
+}
+
+.player, .result {
+	border: 1px solid grey;
+	height: 250px;
+	padding: 20px;
+	text-align: center;
+}
+
+.center {
+	text-align: center;
+}
+
+.rps-options {
+	display: none;
+	/*visibility: hidden;*/
+}
