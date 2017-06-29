@@ -7,6 +7,10 @@
 	text-align: center;
 }
 
+.center {
+	text-align: center;
+}
+
 .player, .result {
 	border: 1px solid grey;
 	height: 250px;
@@ -14,11 +18,24 @@
 	text-align: center;
 }
 
-.center {
-	text-align: center;
-}
-
 .rps-options {
 	display: none;
 	/*visibility: hidden;*/
 }
+
+/*.chatbox {
+	margin: auto;
+	width: 60%;
+}
+
+.chat-conversation {
+	border: 1px solid grey;
+	height: 200px;
+	margin-top: 30px;
+	padding: 20px;
+	text-align: center;
+}
+
+.chat-form {
+	margin-top: 10px;
+}*/

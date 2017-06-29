@@ -80,11 +80,13 @@ $(function() {
 
     if (!player1.name) { // if player1 does not exist
       UI.player1Name.text("Waiting for Player 1");
+      UI.player2Turn.empty(); // if player2 exists and player1 disconnects, there is no "next turn" for player2
       UI.player1Score.empty();
     }
 
     if (!player2.name) { // if player2 does not exist
       UI.player2Name.text("Waiting for Player 2");
+      UI.player1Turn.empty(); // if player1 exists and player2 disconnects, there is no "next turn" for player1
       UI.player2Score.empty();
     }
 
@@ -183,9 +185,33 @@ $(function() {
 
   // we would be grabbing player1.wins and player1.losses from Firebase since it will be updated every time the wins/losses are changed
   // by this function 
-  playersRef.on("value", function(snapshot) {   
+  playersRef.on("value", function(snapshot) {
 
     playersRef.child("player-" + currentPlayer.id).onDisconnect().remove();
+
+    // for when child is removed, need to reset local variables
+    if (!snapshot.child("player-1").exists()) {
+      player1 = {
+        id: 1,
+        name: undefined,
+        losses: 0,
+        wins: 0,
+        rps: undefined,
+        isWinner: false
+      };
+    };
+
+    // for when child is removed, need to reset local variables
+    if (!snapshot.child("player-2").exists()) {
+      player2 = {
+        id: 2,
+        name: undefined,
+        losses: 0,
+        wins: 0,
+        rps: undefined,
+        isWinner: false
+      };
+    };
 
     if (snapshot.child("player-1").exists()) {
     // sync player1 variable with Firebase
