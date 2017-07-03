@@ -16,6 +16,8 @@ $(function() {
 
   var playersRef = database.ref("/players");
 
+  var chatRef = database.ref("/chat");
+
   var isEndGame = false;
   
   var player1 = {
@@ -63,7 +65,9 @@ $(function() {
     player2RpsOptions: $("#player2-rps-options"),
     player2RpsChoice: $("#player2-rps-choice"),
     player2RpsButton: $("#player2-rps-options button"),
-    displayResult: $(".result")
+    displayResult: $(".result"),
+    chatSubmit: $(".chat-submit"),
+    chatConversation: $(".chat-conversation-inner")
   };
 
   function displayPlayer1Info() {
@@ -76,19 +80,31 @@ $(function() {
     UI.player2Score.text("Win: " + player2.wins + " Losses: " + player2.losses);
   };
 
+  function appendChatMessageOnUI(name, message, time) {
+    UI.chatConversation.append("<div>[" + time + "] " + name + ": " + message + "</div>");
+  };
+
+  function appendUserDisconnectedMessageOnUI(name) {
+    UI.chatConversation.append("<div>" + name + " disconnected!</div>");
+  };
+
   function updateUI() {
 
     if (!player1.name) { // if player1 does not exist
       UI.player1Name.text("Waiting for Player 1");
       UI.player2Turn.empty(); // if player2 exists and player1 disconnects, there is no "next turn" for player2
+      UI.player2RpsOptions.hide(); // player1 may disconnect when player2 is about to pick so need to hide the RPS options
+      UI.player2RpsChoice.empty();
       UI.player1Score.empty();
-    }
+    };
 
     if (!player2.name) { // if player2 does not exist
       UI.player2Name.text("Waiting for Player 2");
       UI.player1Turn.empty(); // if player1 exists and player2 disconnects, there is no "next turn" for player1
+      UI.player1RpsOptions.hide();
+      UI.player1RpsChoice.empty();
       UI.player2Score.empty();
-    }
+    };
 
     if (currentPlayer.id !== -1) { // if the currentPlayer is either player1 or player2
       UI.nameForm.hide(); // hide the name form
@@ -96,36 +112,36 @@ $(function() {
 
     if (player1.name && currentPlayer.id === 1) { // if player1 exists and the currentPlayer is player1
       UI.player1Greeting.text("Hi " + currentPlayer.name + "! You are Player " + currentPlayer.id + "!"); // say hi
-    }
+    };
 
     if (player2.name && currentPlayer.id === 2) { // if player2 exists and the currentPlayer is player2
       UI.player2Greeting.text("Hi " + currentPlayer.name + "! You are Player " + currentPlayer.id + "!"); // say hi
-    }
+    };
 
     if (player1.name && player2.name && currentPlayer.id !== -1) { // if player1 and player2 exist and the currentPlayer is either player1 or player2
 
       if (!player1.rps && currentPlayer.id === 1) { // if player1 has not picked RPS and the currentPlayer is player1
         UI.player1Turn.text("It's your turn!"); // tell player1 it is his/her turn
         UI.player1RpsOptions.show(); // show the RPS options for player1
-      }
+      };
 
       if (!player1.rps && currentPlayer.id === 2) { // if player1 has not picked RPS and the currentPlayer is player2
         UI.player2Turn.text("Waiting for " + player1.name + " to choose."); // tell player2 he/she is waiting for player1
-      }
+      };
 
       if (player1.rps && currentPlayer.id === 1) { // if player1 has picked RPS and the currentPlayer is player1
         UI.player1RpsOptions.hide(); // hide the RPS options for player1
         UI.player1RpsChoice.text(player1.rps); // display player1's RPS to player1
-      }
+      };
 
       if (player1.rps && !player2.rps && currentPlayer.id === 1) { // if player1 has picked RPS but player2 has not picked RPS and the currentPlayer is player1
         UI.player1Turn.text("Waiting for " + player2.name + " to choose."); // tell player1 he/she is waiting for player2
-      }
+      };
 
       if (player1.rps && !player2.rps && currentPlayer.id === 2) { // if player1 has picked RPS but player2 has not picked RPS and the currentPlayer is player2
         UI.player2Turn.text("It's your turn!");
         UI.player2RpsOptions.show(); // show the RPS options for player2
-      }
+      };
 
       if (player1.rps && player2.rps) { // if player1 and player2 has picked RPS
         UI.player1Turn.empty(); // waiting for results
@@ -144,17 +160,17 @@ $(function() {
           UI.displayResult.text("Tie!") // display it is a tie
         }
         setTimeout(reset, 3000);
-      }
+      };
     };
 
     // regardless of the currentPlayer's id, will still display player1 and player2's info unless they do not exist
     if (player1.name) { // if player1 exists
       displayPlayer1Info(); 
-    }
+    };
 
     if (player2.name) { // if player2 exists
       displayPlayer2Info();
-    }
+    };
 
   };
 
@@ -187,7 +203,7 @@ $(function() {
   // by this function 
   playersRef.on("value", function(snapshot) {
 
-    playersRef.child("player-" + currentPlayer.id).onDisconnect().remove();
+    // playersRef.child("player-" + currentPlayer.id).onDisconnect().remove().then(function() {console.log("child removed")});
 
     // for when child is removed, need to reset local variables
     if (!snapshot.child("player-1").exists()) {
@@ -321,6 +337,34 @@ $(function() {
 
   });
 
+  // playersRef.child("player-" + currentPlayer.id).onDisconnect().remove("child").then(function() {console.log("child removed")});
+
+
+  chatRef.on("child_added", function(childSnapshot) {
+
+    if (childSnapshot.child("templateId").val() === 1) { // if the message added to chatRef is chat submission
+      const chatName = childSnapshot.child("name").val();
+      const chatMessage = childSnapshot.child("message").val();
+      const chatTime = moment(childSnapshot.child("time").val()).utc().format("MMMM Do YYYY, h:mm:ss a");
+      appendChatMessageOnUI(chatName, chatMessage, chatTime);
+    } else { // if the message added to chatRef is player disconnect
+      const chatName = childSnapshot.child("name").val();
+      appendUserDisconnectedMessageOnUI(chatName);
+    };
+
+    UI.chatConversation.scrollTop(UI.chatConversation[0].scrollHeight);
+
+  });
+
+  playersRef.on("child_removed", function(childSnapshot) {
+
+    chatRef.push({
+      templateId: 2, // 1 for chat submission, 2 for player disconnect
+      name: childSnapshot.child("name").val(),
+      time: firebase.database.ServerValue.TIMESTAMP
+    });
+
+  });
 
   UI.submitName.on("click", function(event) {
 
@@ -332,6 +376,7 @@ $(function() {
 
     // TODO
     if (!inputName) { // if user submits an empty name
+      alert("Please input your name to start chatting!"); // alert user he/she needs to input name
     }
 
     if (player1.name && player2.name) { // if player1 and player2 already exist, then alert the user that they cannot play
@@ -371,6 +416,7 @@ $(function() {
 
     // only update Firebase if the currentPlayer is player1 or player2
     if (currentPlayer.id !== -1) {
+      playersRef.child("player-" + currentPlayer.id).onDisconnect().remove();
       playersRef.child("player-" + currentPlayer.id).update({
         name: currentPlayer.name, 
         losses: currentPlayer.losses,
@@ -402,6 +448,32 @@ $(function() {
     });
 
     updateUI();
+  });
+
+  UI.chatSubmit.on("click", function(event) {
+
+    // stop the page from refreshing
+    event.preventDefault();
+
+    const inputChat = $("#chat-input").val();
+    console.log(currentPlayer.name + ": " + inputChat);
+
+    if (!currentPlayer.name) { // if currentPlayer's name is undefined
+      alert("Please input your name to start chatting!"); // alert user he/she needs to input name
+    } else { // if name exists, push their message to Firebase
+      chatRef.push({
+        templateId: 1, // 1 for chat submission, 2 for player disconnect
+        name: currentPlayer.name,
+        message: inputChat,
+        time: firebase.database.ServerValue.TIMESTAMP
+      });
+    }
+
+    // need to clear the chat input form upon submission
+    $("#chat-input").val("");
+
+    updateUI();
+
   });
 
 });
