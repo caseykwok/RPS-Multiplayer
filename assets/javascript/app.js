@@ -82,7 +82,12 @@ $(function() {
   };
 
   function appendChatMessageOnUI(name, message, time) {
-    UI.chatConversation.append("<div>[" + time + "] " + name + ": " + message + "</div>");
+    if (currentPlayer.name !== name) { // if the message to be added does not belong to the currentPlayer's
+      UI.chatConversation.append("<div><span id='chat-time'>[" + time + "]</span> <span id='others-chat-name'>" + name + ":</span> <span id='chat-message'>" + message + "</span></div>");
+    } else { // if the message belongs to the currentPlayer's
+      UI.chatConversation.append("<div><span id='chat-time'>[" + time + "]</span> <span id='own-chat-name'>" + name + ":</span> <span id='chat-message'>" + message + "</span></div>"); 
+    }
+    // UI.chatConversation.append("<div><span id='chat-time'>[" + time + "]</span> <span id='chat-name'>" + name + "</span>: " + message + "</div>");
   };
 
   function appendUserDisconnectedMessageOnUI(name) {
@@ -355,7 +360,8 @@ $(function() {
       const chatName = childSnapshot.child("name").val();
       const chatMessage = childSnapshot.child("message").val();
       // const chatTime = moment(childSnapshot.child("time").val()).utc().format("MMMM Do YYYY, h:mm:ss a");
-      const chatTime = moment(childSnapshot.child("time").val()).format("MMMM Do YYYY, h:mm:ss a");
+      // const chatTime = moment(childSnapshot.child("time").val()).format("MMMM Do YYYY, h:mm:ss a");
+      const chatTime = moment(childSnapshot.child("time").val()).format("HH:mm");
       appendChatMessageOnUI(chatName, chatMessage, chatTime);
     } else { // if the message added to chatRef is player disconnect
       const chatName = childSnapshot.child("name").val();
@@ -375,6 +381,20 @@ $(function() {
   //   });
 
   // });
+
+  playersRef.on("child_removed", function(childSnapshot) {
+    if (childSnapshot.id === 1) {
+      playersRef.child("player-2").update({
+        rps: null
+      })
+    } else {
+      playersRef.child("player-1").update({
+        rps: null
+      })
+    }
+
+    updateUI();
+  });
 
   UI.submitName.on("click", function(event) {
 

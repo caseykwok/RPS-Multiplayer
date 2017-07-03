@@ -1,12 +1,12 @@
 body {
-	background-color: #FAF6E6;
+	background-color: #FDF6F6;
 	color: #696969;
 	font-family: 'Montserrat', sans-serif;
 }
 
 .header {
-	background-color: #8E8EAD;
-	color: #ffffff;
+	background-color: #B3DBC0;
+	color: #FDF6F6;
 	font-size: 50px;
 	margin-bottom: 0px;
 	margin-top: 0px;
@@ -20,7 +20,7 @@ body {
 }
 
 .player, .result {
-	background-color: #ffffff;
+	background-color: rgba(255, 255, 255, 0.5);
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	height: 220px;
@@ -35,7 +35,7 @@ body {
 }
 
 .rps-buttons {
-	background-color: #E6E6FA;
+	background-color: #B3DBC0;
 	border-radius: 4px;
 }
 
@@ -44,8 +44,9 @@ body {
 }
 
 .rps-buttons:hover {
-	background-color: #8E8EAD;
-	color: #ffffff;
+	background-color: #67BACA;
+	color: #FDF6F6;
+	font-weight: bold;
 }
 
 .rps-choice {
@@ -70,7 +71,7 @@ body {
 }
 
 .chat-conversation-outer {
-	background-color: #ffffff;
+	background-color: rgba(255, 255, 255, 0.5);
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	height: 200px;
@@ -86,4 +87,12 @@ body {
 
 .chat-form {
 	margin-top: 10px;
+}
+
+#others-chat-name {
+	color: #FE0000;
+}
+
+#own-chat-name {
+	color: #67BACA;
 }
