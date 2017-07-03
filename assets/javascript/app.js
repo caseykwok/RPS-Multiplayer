@@ -65,6 +65,7 @@ $(function() {
     player2RpsOptions: $("#player2-rps-options"),
     player2RpsChoice: $("#player2-rps-choice"),
     player2RpsButton: $("#player2-rps-options button"),
+    othersGreeting: $("#others-greeting"),
     displayResult: $(".result"),
     chatSubmit: $(".chat-submit"),
     chatConversation: $(".chat-conversation-inner")
@@ -106,9 +107,13 @@ $(function() {
       UI.player2Score.empty();
     };
 
-    if (currentPlayer.id !== -1) { // if the currentPlayer is either player1 or player2
+    // if (currentPlayer.id !== -1) { // if the currentPlayer is either player1 or player2
+    //   UI.nameForm.hide(); // hide the name form
+    // };
+
+    if (currentPlayer.name) { // if the currentPlayer's name is set
       UI.nameForm.hide(); // hide the name form
-    };
+    }
 
     if (player1.name && currentPlayer.id === 1) { // if player1 exists and the currentPlayer is player1
       UI.player1Greeting.text("Hi " + currentPlayer.name + "! You are Player " + currentPlayer.id + "!"); // say hi
@@ -117,6 +122,10 @@ $(function() {
     if (player2.name && currentPlayer.id === 2) { // if player2 exists and the currentPlayer is player2
       UI.player2Greeting.text("Hi " + currentPlayer.name + "! You are Player " + currentPlayer.id + "!"); // say hi
     };
+
+    if (currentPlayer.name && currentPlayer.id === -1) { // if currentPlayer's name is set and the currentPlayer is neither player1 or player2
+      UI.othersGreeting.text("Sorry, the game is full. Please try again later.");
+    }
 
     if (player1.name && player2.name && currentPlayer.id !== -1) { // if player1 and player2 exist and the currentPlayer is either player1 or player2
 
@@ -357,15 +366,15 @@ $(function() {
 
   });
 
-  playersRef.on("child_removed", function(childSnapshot) {
+  // playersRef.on("child_removed", function(childSnapshot) {
 
-    chatRef.push({
-      templateId: 2, // 1 for chat submission, 2 for player disconnect
-      name: childSnapshot.child("name").val(),
-      time: firebase.database.ServerValue.TIMESTAMP
-    });
+  //   chatRef.push({
+  //     templateId: 2, // 1 for chat submission, 2 for player disconnect
+  //     name: childSnapshot.child("name").val(),
+  //     time: firebase.database.ServerValue.TIMESTAMP
+  //   });
 
-  });
+  // });
 
   UI.submitName.on("click", function(event) {
 
