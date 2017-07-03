@@ -1,5 +1,13 @@
+body {
+	background-color: #FAF6E6;
+	color: #696969;
+	font-family: 'Montserrat', sans-serif;
+}
+
 .header {
-	background-color: lavender;
+	background-color: #8E8EAD;
+	color: #ffffff;
+	font-size: 50px;
 	margin-bottom: 0px;
 	margin-top: 0px;
 	padding-bottom: 20px;
@@ -12,26 +20,61 @@
 }
 
 .player, .result {
-	border: 1px solid grey;
-	height: 200px;
+	background-color: #ffffff;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	height: 220px;
 	padding: 20px;
 	text-align: center;
 }
 
 .rps-options {
 	display: none;
-	/*visibility: hidden;*/
+	padding-bottom: 10px;
+	padding-top: 10px;
+}
+
+.rps-buttons {
+	background-color: #E6E6FA;
+	border-radius: 4px;
+}
+
+.name-submit, .chat-submit {
+	color: #696969;
+}
+
+.rps-buttons:hover {
+	background-color: #8E8EAD;
+	color: #ffffff;
+}
+
+.rps-choice {
+	font-size: 40px;
+	padding-top: 10px;
+}
+
+.result {
+	font-size: 40px;
+	padding-bottom: 65px;
+	padding-top: 70px;
 }
 
 .chat {
+	color: #696969;
 	margin: auto;
 	width: 60%;
 }
 
+.chat-input {
+	width: 100%;
+}
+
 .chat-conversation-outer {
-	border: 1px solid grey;
+	background-color: #ffffff;
+	border: 1px solid #ccc;
+	border-radius: 4px;
 	height: 200px;
-	margin-top: 30px;
+	margin-top: 20px;
 	/*overflow-x: hidden;*/
 }
 

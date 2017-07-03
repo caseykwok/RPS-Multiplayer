@@ -72,12 +72,12 @@ $(function() {
 
   function displayPlayer1Info() {
     UI.player1Name.text(player1.name);
-    UI.player1Score.text("Win: " + player1.wins + " Losses: " + player1.losses);
+    UI.player1Score.text("Wins: " + player1.wins + " Losses: " + player1.losses);
   };
 
   function displayPlayer2Info() {
     UI.player2Name.text(player2.name);
-    UI.player2Score.text("Win: " + player2.wins + " Losses: " + player2.losses);
+    UI.player2Score.text("Wins: " + player2.wins + " Losses: " + player2.losses);
   };
 
   function appendChatMessageOnUI(name, message, time) {
@@ -345,7 +345,8 @@ $(function() {
     if (childSnapshot.child("templateId").val() === 1) { // if the message added to chatRef is chat submission
       const chatName = childSnapshot.child("name").val();
       const chatMessage = childSnapshot.child("message").val();
-      const chatTime = moment(childSnapshot.child("time").val()).utc().format("MMMM Do YYYY, h:mm:ss a");
+      // const chatTime = moment(childSnapshot.child("time").val()).utc().format("MMMM Do YYYY, h:mm:ss a");
+      const chatTime = moment(childSnapshot.child("time").val()).format("MMMM Do YYYY, h:mm:ss a");
       appendChatMessageOnUI(chatName, chatMessage, chatTime);
     } else { // if the message added to chatRef is player disconnect
       const chatName = childSnapshot.child("name").val();
@@ -374,7 +375,6 @@ $(function() {
     const inputName = $("#name-input").val();
     console.log("Name: " + inputName);
 
-    // TODO
     if (!inputName) { // if user submits an empty name
       alert("Please input your name to start chatting!"); // alert user he/she needs to input name
     }
@@ -460,7 +460,7 @@ $(function() {
 
     if (!currentPlayer.name) { // if currentPlayer's name is undefined
       alert("Please input your name to start chatting!"); // alert user he/she needs to input name
-    } else { // if name exists, push their message to Firebase
+    } else if (inputChat) { // if name exists and their input chat is not an empty string, push their message to Firebase
       chatRef.push({
         templateId: 1, // 1 for chat submission, 2 for player disconnect
         name: currentPlayer.name,
